@@ -23,7 +23,7 @@ func RegisterHandler(repo repository.Repository, config *config.Config) gin.Hand
 			errors.HandlerErr(err, ctx)
 			return
 		}
-		token, err := utils.GenerateToken(usr, config)
+		token, err := utils.GenerateToken(usr.Login, config.SecretKey)
 		if err != nil {
 			errors.HandlerErr(err, ctx)
 			return
@@ -43,7 +43,7 @@ func LoginHandler(repo repository.Repository, config *config.Config) gin.Handler
 			errors.HandlerErr(err, ctx)
 			return
 		}
-		token, err := utils.GenerateToken(usr, config)
+		token, err := utils.GenerateToken(usr.Login, config.SecretKey)
 		if err != nil {
 			errors.HandlerErr(err, ctx)
 			return

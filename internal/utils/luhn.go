@@ -1,6 +1,9 @@
 package utils
 
 func LuhnValid(order string) bool {
+	if len(order) < 1 {
+		return false
+	}
 	sum := 0
 	parity := len(order) % 2
 	for i := len(order) - 1; i >= 0; i-- {
