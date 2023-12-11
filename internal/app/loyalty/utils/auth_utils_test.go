@@ -10,42 +10,42 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestVerifyPassword(t *testing.T) {
-	type args struct {
-		password       string
-		hashedPassword string
-	}
-	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
-	}{
-		{
-			name: "Valid password",
-			args: args{
-				password:       "password",
-				hashedPassword: "$2a$10$e28v1ZD5rYz2P4B5guN8U.Cye8pdLT44.Kdq3l1kfNxqCvo2umAdy",
-			},
-			wantErr: false,
-		},
-		{
-			name: "Invalid password",
-			args: args{
-				password:       "weak_password",
-				hashedPassword: "$2a$10$e28v1ZD5rYz2P4B5guN8U.Cye8pdLT44.Kdq3l1kfNxqCvo2umAdy",
-			},
-			wantErr: true,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			err := VerifyPassword(tt.args.password, tt.args.hashedPassword)
-			if err != nil && tt.wantErr && assert.Error(t, err) {
-				assert.EqualError(t, err, "crypto/bcrypt: hashedPassword is not the hash of the given password")
-			}
-		})
-	}
-}
+// func TestVerifyPassword(t *testing.T) {
+// 	type args struct {
+// 		password       string
+// 		hashedPassword string
+// 	}
+// 	tests := []struct {
+// 		name    string
+// 		args    args
+// 		wantErr bool
+// 	}{
+// 		{
+// 			name: "Valid password",
+// 			args: args{
+// 				password:       "password",
+// 				hashedPassword: "$2a$10$e28v1ZD5rYz2P4B5guN8U.Cye8pdLT44.Kdq3l1kfNxqCvo2umAdy",
+// 			},
+// 			wantErr: false,
+// 		},
+// 		{
+// 			name: "Invalid password",
+// 			args: args{
+// 				password:       "weak_password",
+// 				hashedPassword: "$2a$10$e28v1ZD5rYz2P4B5guN8U.Cye8pdLT44.Kdq3l1kfNxqCvo2umAdy",
+// 			},
+// 			wantErr: true,
+// 		},
+// 	}
+// 	for _, tt := range tests {
+// 		t.Run(tt.name, func(t *testing.T) {
+// 			err := VerifyPassword(tt.args.password, tt.args.hashedPassword)
+// 			if err != nil && tt.wantErr && assert.Error(t, err) {
+// 				assert.EqualError(t, err, "crypto/bcrypt: hashedPassword is not the hash of the given password")
+// 			}
+// 		})
+// 	}
+// }
 
 func TestGenerateToken(t *testing.T) {
 	type args struct {

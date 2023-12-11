@@ -22,9 +22,13 @@ func (uh *UserHandlers) CreateUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	if err := uh.uc.RegisterUser(c.Request.Context(), user.Login, user.Password); err != nil {
+	token, err := uh.uc.RegisterUser(c.Request.Context(), user.Login, user.Password)
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
+	c.Header("Authorization", "Bearer "+token)
+	c.Status(http.StatusCreated)
 }
 
 func (uh *UserHandlers) LoginUser(c *gin.Context) {
@@ -33,7 +37,11 @@ func (uh *UserHandlers) LoginUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	if err := uh.uc.LoginUser(c.Request.Context(), user.Login, user.Password); err != nil {
+	token, err := uh.uc.LoginUser(c.Request.Context(), user.Login, user.Password)
+	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
+	c.Header("Authorization", "Bearer "+token)
+	c.Status(http.StatusOK)
 }

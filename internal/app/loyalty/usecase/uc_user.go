@@ -23,14 +23,19 @@ type UserRepo interface {
 type UserUseCase struct {
 	repo   UserRepo
 	config *config.Config
+	hasher utils.Passworder
 }
 
-func New(repo UserRepo, config *config.Config) *UserUseCase {
-	return &UserUseCase{repo: repo, config: config}
+func NewUserUseCase(repo UserRepo, config *config.Config, hasher utils.Passworder) *UserUseCase {
+	return &UserUseCase{repo: repo, config: config, hasher: hasher}
 }
 
 func (uc *UserUseCase) RegisterUser(ctx context.Context, login, password string) (string, error) {
-	newUser := entity.User{Login: login, Password: password}
+	hashPassword, err := uc.hasher.Hash(password)
+	if err != nil {
+		return "", err
+	}
+	newUser := entity.User{Login: login, Password: hashPassword}
 	if err := uc.repo.AddUser(ctx, &newUser); err != nil {
 		return "", err
 	}
@@ -42,7 +47,7 @@ func (uc *UserUseCase) LoginUser(ctx context.Context, login, password string) (s
 	if err != nil {
 		return "", err
 	}
-	if err := utils.VerifyPassword(password, user.Password); err != nil {
+	if err := uc.hasher.Verify(password, user.Password); err != nil {
 		return "", err
 	}
 	return utils.GenerateToken(login, uc.config.SecretKey)

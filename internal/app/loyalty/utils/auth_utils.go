@@ -19,7 +19,30 @@ func GenerateToken(login string, secretKey string) (string, error) {
 	return token.SignedString([]byte(secretKey))
 }
 
-func VerifyPassword(password, hashedPassword string) error {
+type Passworder interface {
+	Hash(password string) (string, error)
+	Verify(password, hashedPassword string) error
+}
+
+type HasherPassworder struct {
+}
+
+func NewHashPassworder() *HasherPassworder {
+	return &HasherPassworder{}
+}
+
+func (hp *HasherPassworder) Hash(password string) (string, error) {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+
+	if err != nil {
+		return "", err
+	}
+	password = string(hashedPassword)
+	// user.Login = html.EscapeString(strings.TrimSpace(user.Login))
+	return password, nil
+}
+
+func (hp *HasherPassworder) Verify(password, hashedPassword string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 }
 
